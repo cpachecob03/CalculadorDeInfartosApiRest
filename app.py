@@ -1,0 +1,91 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+from pydantic import BaseModel, Field
+import model as model
+
+#2. Servidor FastAPI
+app = FastAPI(
+    title="API de IMC de Carlos Pacheco",
+    description="Servicio web para calcular el IMC del usuario",
+    version="1.0.0"
+)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+# Montamos la carpeta static para servir el código JavaScript y estilos
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# ==========================================
+# 3. Endpoints del servicio y Frontend
+# ==========================================
+
+@app.get("/", response_class=FileResponse)
+def inicio():
+    return FileResponse("index.html")
+
+@app.post("/api/calcular-imc", response_model=model.ResultadoCalculoIMC)
+def calcular_imc(solicitud: model.SolicitudCalculoIMC):
+    """
+    A través de la altura, la edad y el peso del usuario nos permite calcular su IMC.
+    """
+    categoria_peso = "Peso normal";
+    resultado_imc = (solicitud.peso_persona / ((solicitud.altura_persona/100) * (solicitud.altura_persona/100)));
+    
+    if resultado_imc < 18.5:
+        categoria_peso = "Peso bajo";
+    elif resultado_imc > 18.5 and resultado_imc < 24.9:
+        categoria_peso = "Peso adecuado";
+    elif resultado_imc >= 25 and resultado_imc < 29.9:
+        categoria_peso = "sobrepeso";
+    elif resultado_imc >=30 and resultado_imc < 34.9:
+        categoria_peso = "obesidad grado 1";
+    elif resultado_imc >= 35 and resultado_imc < 39.9:
+        categoria_peso = "obesidad grado 2";
+    elif resultado_imc >= 40:
+        categoria_peso = "obesidad grado 3"
+
+    # Bonificaciones y penalizaciones segun la edad
+    if solicitud.edad < 40:
+        boni_edad = 1
+    elif solicitud.edad > 40 and solicitud.edad < 60:
+        boni_edad = 2
+    else:
+        boni_edad = 3
+
+    if categoria_peso == "Peso bajo" or categoria_peso == "Peso adecuado":
+        boni_peso = 1
+    elif categoria_peso == "sobrepeso" or categoria_peso == "obesidad grado 1":
+        boni_peso = 2
+    else:
+        boni_peso = 3
+
+    calcular_riesgo_infarto = boni_edad * boni_peso
+
+    if calcular_riesgo_infarto <= 2:
+        probabilidad_infarto = "10%"
+        recomendacion = "Sigue así lo estas haciendo guay"
+    elif calcular_riesgo_infarto > 2 and calcular_riesgo_infarto <= 5:
+        probabilidad_infarto = "20-30%"
+        recomendacion = "Estas bien pero no te confies"
+    elif calcular_riesgo_infarto == 6:
+        probabilidad_infarto = "40-50%"
+        recomendacion = "Deberias bajar tu peso"
+    elif calcular_riesgo_infarto > 6:
+        probabilidad_infarto = "60-70%"
+        recomendacion = "Es probable que mueras"
+
+    return {
+        "solicitante": solicitud.nombre,
+        "calculo_imc": resultado_imc,
+        "categoria_peso": categoria_peso,
+        "probabilidad_infarto": probabilidad_infarto,
+        "recomendacion": recomendacion
+    }
