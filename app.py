@@ -19,13 +19,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 # Montamos la carpeta static para servir el código JavaScript y estilos
 app.mount("/static", StaticFiles(directory="static"), name="static")
-
-# ==========================================
-# 3. Endpoints del servicio y Frontend
-# ==========================================
 
 @app.get("/", response_class=FileResponse)
 def inicio():
@@ -34,14 +29,14 @@ def inicio():
 @app.post("/api/calcular-imc", response_model=model.ResultadoCalculoIMC)
 def calcular_imc(solicitud: model.SolicitudCalculoIMC):
     """
-    A través de la altura, la edad y el peso del usuario nos permite calcular su IMC.
+    A través de la altura, la edad y el peso del usuario nos permite calcular su IMC y devolvemos el porcentaje de riesgo de infarto y un consejo de salud personalizado
     """
     categoria_peso = "Peso normal";
     resultado_imc = (solicitud.peso_persona / ((solicitud.altura_persona/100) * (solicitud.altura_persona/100)));
     
     if resultado_imc < 18.5:
         categoria_peso = "Peso bajo";
-    elif resultado_imc > 18.5 and resultado_imc < 24.9:
+    elif resultado_imc >= 18.5 and resultado_imc < 24.9:
         categoria_peso = "Peso adecuado";
     elif resultado_imc >= 25 and resultado_imc < 29.9:
         categoria_peso = "sobrepeso";
@@ -55,7 +50,7 @@ def calcular_imc(solicitud: model.SolicitudCalculoIMC):
     # Bonificaciones y penalizaciones segun la edad
     if solicitud.edad < 40:
         boni_edad = 1
-    elif solicitud.edad > 40 and solicitud.edad < 60:
+    elif solicitud.edad >= 40 and solicitud.edad <= 60:
         boni_edad = 2
     else:
         boni_edad = 3
@@ -71,16 +66,16 @@ def calcular_imc(solicitud: model.SolicitudCalculoIMC):
 
     if calcular_riesgo_infarto <= 2:
         probabilidad_infarto = "10%"
-        recomendacion = "Sigue así lo estas haciendo guay"
+        recomendacion = "Sigue así lo estas haciendo muy bien"
     elif calcular_riesgo_infarto > 2 and calcular_riesgo_infarto <= 5:
         probabilidad_infarto = "20-30%"
-        recomendacion = "Estas bien pero no te confies"
+        recomendacion = "Estas bien, mantente así"
     elif calcular_riesgo_infarto == 6:
         probabilidad_infarto = "40-50%"
         recomendacion = "Deberias bajar tu peso"
     elif calcular_riesgo_infarto > 6:
         probabilidad_infarto = "60-70%"
-        recomendacion = "Es probable que mueras"
+        recomendacion = "Si no cambias tu estilo de vida, tu riesgo de infarto es alto, deberias bajar tu peso y hacer ejercicio"
 
     return {
         "solicitante": solicitud.nombre,

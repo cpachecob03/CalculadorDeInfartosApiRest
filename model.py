@@ -7,8 +7,8 @@ class SolicitudCalculoIMC(BaseModel):
     altura_persona: float = Field(gt=80, description="Altura del usuario en centimetros (100cm = 1m)")
 
 class ResultadoCalculoIMC(BaseModel):
-    solicitante: str
-    calculo_imc: float
-    categoria_peso: str
-    probabilidad_infarto: str  
-    recomendacion: str        
+    solicitante: str = Field(description="Nombre del usuario que hace la consulta")
+    calculo_imc: float = Field(description="IMC del usuario")
+    categoria_peso: str = Field(description="Clasificación del peso (peso adecuado, sobrepeso)")
+    probabilidad_infarto: str = Field(description="Porcentaje estimado de riesgo de infarto")
+    recomendacion: str = Field(description="Consejos de salud personalizados según los resultados") 
