@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora de IMC - Carlos Pacheco</title>
-    <!-- Estilos modernos con Tailwind CSS desde CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 <body class="bg-slate-100 min-h-screen flex items-center justify-center p-4">
@@ -15,7 +14,6 @@
             <p class="text-sm text-slate-500 mt-1">API de IMC de Carlos Pacheco</p>
         </header>
 
-        <!-- Formulario de entrada con límites min y max añadidos -->
         <form id="imcForm" class="space-y-4">
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">Nombre:</label>
@@ -27,13 +25,13 @@
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Peso (kg):</label>
-                    <input type="number" step="0.1" id="peso" required min="25.1" max="500"
+                    <input type="number" step="0.1" id="peso" required min="25.1" max="300"
                         class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                         placeholder="Ej. 70">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Altura (cm):</label>
-                    <input type="number" id="altura" required min="80.1" max="300"
+                    <input type="number" id="altura" required min="50.1" max="250"
                         class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                         placeholder="Ej. 175">
                 </div>
@@ -52,7 +50,6 @@
             </button>
         </form>
 
-        <!-- Contenedor de Resultados (Oculto inicialmente) -->
         <div id="resultadoContainer" class="mt-8 hidden border-t border-slate-200 pt-6">
             <h2 class="text-lg font-semibold text-slate-800 mb-4 text-center">Resultados para <span id="resSolicitante" class="text-blue-600"></span></h2>
             
@@ -77,7 +74,6 @@
         </div>
     </div>
 
-    <!-- Script para consumir la API -->
     <script>
         const form = document.getElementById('imcForm');
         const resultadoContainer = document.getElementById('resultadoContainer');
@@ -85,7 +81,6 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            // Recoger los datos del formulario 
             const datos = {
                 nombre: document.getElementById('nombre').value,
                 peso_persona: parseFloat(document.getElementById('peso').value),
@@ -94,7 +89,6 @@
             };
 
             try {
-                // Petición POST al endpoint del backend
                 const response = await fetch('/api/calcular-imc', {
                     method: 'POST',
                     headers: {
@@ -103,11 +97,9 @@
                     body: JSON.stringify(datos)
                 });
 
-                // NUEVA LÓGICA DE CAPTURA DE ERRORES
                 if (!response.ok) {
                     if (response.status === 422) {
                         const errorData = await response.json();
-                        // Extraer los errores enviados por FastAPI/Pydantic
                         const mensajesError = errorData.detail.map(err => {
                             const campo = err.loc[err.loc.length - 1]; 
                             return `- ${campo}: ${err.msg}`;
@@ -121,18 +113,15 @@
 
                 const resultado = await response.json();
 
-                // Mostrar los valores en la interfaz
                 document.getElementById('resSolicitante').textContent = resultado.solicitante;
                 document.getElementById('resImc').textContent = resultado.calculo_imc.toFixed(2);
                 document.getElementById('resCategoria').textContent = resultado.categoria_peso;
                 document.getElementById('resProbabilidad').textContent = resultado.probabilidad_infarto;
                 document.getElementById('resRecomendacion').textContent = resultado.recomendacion;
 
-                // Mostrar el bloque de resultados
                 resultadoContainer.classList.remove('hidden');
 
             } catch (error) {
-                // Muestra la alerta con los campos exactos que fallaron
                 alert(error.message);
                 console.error(error);
             }
