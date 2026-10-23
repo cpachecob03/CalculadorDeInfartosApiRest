@@ -15,11 +15,11 @@
             <p class="text-sm text-slate-500 mt-1">API de IMC de Carlos Pacheco</p>
         </header>
 
-        <!-- Formulario de entrada -->
+        <!-- Formulario de entrada con límites min y max añadidos -->
         <form id="imcForm" class="space-y-4">
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">Nombre:</label>
-                <input type="text" id="nombre" required 
+                <input type="text" id="nombre" required minlength="2" maxlength="50"
                     class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     placeholder="Introduce tu nombre">
             </div>
@@ -27,13 +27,13 @@
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Peso (kg):</label>
-                    <input type="number" step="0.1" id="peso" required 
+                    <input type="number" step="0.1" id="peso" required min="25.1" max="500"
                         class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                         placeholder="Ej. 70">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Altura (cm):</label>
-                    <input type="number" id="altura" required 
+                    <input type="number" id="altura" required min="80.1" max="300"
                         class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                         placeholder="Ej. 175">
                 </div>
@@ -41,7 +41,7 @@
 
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">Edad (años):</label>
-                <input type="number" id="edad" required 
+                <input type="number" id="edad" required min="10" max="90"
                     class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     placeholder="Ej. 30">
             </div>
@@ -85,7 +85,7 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            // Recoger los datos del formulario (ajustados a los nombres que espera tu Pydantic)
+            // Recoger los datos del formulario 
             const datos = {
                 nombre: document.getElementById('nombre').value,
                 peso_persona: parseFloat(document.getElementById('peso').value),
@@ -103,8 +103,20 @@
                     body: JSON.stringify(datos)
                 });
 
+                // NUEVA LÓGICA DE CAPTURA DE ERRORES
                 if (!response.ok) {
-                    throw new Error('Error al conectar con el servidor');
+                    if (response.status === 422) {
+                        const errorData = await response.json();
+                        // Extraer los errores enviados por FastAPI/Pydantic
+                        const mensajesError = errorData.detail.map(err => {
+                            const campo = err.loc[err.loc.length - 1]; 
+                            return `- ${campo}: ${err.msg}`;
+                        }).join('\n');
+                        
+                        throw new Error(`Revisa los datos introducidos:\n${mensajesError}`);
+                    } else {
+                        throw new Error('Error al conectar con el servidor.');
+                    }
                 }
 
                 const resultado = await response.json();
@@ -120,7 +132,8 @@
                 resultadoContainer.classList.remove('hidden');
 
             } catch (error) {
-                alert('Ocurrió un error al procesar el cálculo. Revisa la consola.');
+                // Muestra la alerta con los campos exactos que fallaron
+                alert(error.message);
                 console.error(error);
             }
         });
