@@ -2,10 +2,6 @@
 ### AS1. API Rest + Despliegue
 # Calculadora de IMC y Riesgo Cardiovascular (API REST)
 
-Primero de todo deberemos clonar el repositorio del proyecto: 
-```js
-git clone https://github.com/cpachecob03/CalculadorDeInfartosApiRest.git
-```
 
 ### Descripción del proyecto
 
@@ -17,14 +13,19 @@ Puedes probar la aplicación en la siguiente URL:
 https://calculadordeinfartosapirest.vercel.app/
 ```
 ### Plataforma de despliegue
-La plataforma de despliegue que utilizare es Vercel
+La plataforma de despliegue que utilizaré es Vercel
 
 ### Descripción detallada del proceso de despliegue
+
+Primero de todo deberemos clonar el repositorio del proyecto: 
+```js
+git clone https://github.com/cpachecob03/CalculadorDeInfartosApiRest.git
+```
 
 Para desplegar esta aplicación en vercel, tendremos que adaptar ciertos archivos al entorno de vercel. 
 A continuación se detallan los pasos para realizar este despliegue:
 
-# Preparación de las dependencias
+### Preparación de las dependencias
 Vercel necesita saber qué paquetes de Python instalar. Para ello, es obligatorio crear un archivo llamado `requirements.txt` en la raíz del proyecto que contenga las librerías principales:
 ```js
 fastapi
@@ -32,7 +33,7 @@ uvicorn
 pydantic
 ```
 Creación del archivo de configuración de vercel ( vercel.json )
-Para que vercel sepa como ejecutar nuestra aplicacion FastAPI, creamos en la raiz un archivo llamado "vercel.json". Este archivo indica a vercel que debe usar el entorno de Python y redirifir todo el tráfico a "app.py".
+Para que vercel sepa como ejecutar nuestra aplicacion FastAPI, creamos en la raiz un archivo llamado "vercel.json". Este archivo indica a vercel que debe usar el entorno de Python y redirigir todo el tráfico a "app.py".
 ```js
 {
   "version": 2,
@@ -50,10 +51,10 @@ Para que vercel sepa como ejecutar nuestra aplicacion FastAPI, creamos en la rai
   ]
 }
 ```
-# 4. Despliegue desde la plataforma de Vercel
+### Despliegue desde la plataforma de Vercel
 Con el código preparado y subido a un repositorio de GitHub:
  1.- Accedemos a Vercel e iniciamos sesión con nuestra cuenta de GitHub.
- 2.- Hacemos clic en Add New Project.
+ 2.- Hacemos clic en Create new project, si hemos vinculado la cuenta de GitHub correctamente saldrán ya nuestros repositorios.
  3.- Importamos el repositorio de nuestro código.
  4.- Pulsamos en Deploy.
 
