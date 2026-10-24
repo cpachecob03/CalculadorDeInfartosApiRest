@@ -22,6 +22,18 @@ app.add_middleware(
 @app.get("/", response_class=FileResponse)
 def inicio():
     return FileResponse("index.html")
+@app.get("/api/estado")
+def estado():
+    """
+    Direccion de la api que devuelve el estado actual de la misma y sus detalles
+    """
+    return {
+        "estado": "Operativo",
+        "servicio": "API de Cálculo de IMC y Riesgo de Infarto",
+        "version": "1.0.0",
+        "modelos_activos": ["CalculoIMC"],
+        "autor": "Carlos Pacheco Belzunces"
+    }
 
 @app.post("/api/calcular-imc", response_model=model.ResultadoCalculoIMC)
 def calcular_imc(solicitud: model.SolicitudCalculoIMC):
