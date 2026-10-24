@@ -19,9 +19,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Montamos la carpeta static para servir el código JavaScript y estilos
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
 @app.get("/", response_class=FileResponse)
 def inicio():
     return FileResponse("index.html")
