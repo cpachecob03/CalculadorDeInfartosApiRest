@@ -62,20 +62,37 @@ def calcular_imc(solicitud: model.SolicitudCalculoIMC):
     else:
         boni_peso = 3
 
-    calcular_riesgo_infarto = boni_edad * boni_peso
+    if solicitud.deporte == "No hago nada":
+        boni_deporte = 2 
+    elif solicitud.deporte == "1 vez a la semana":
+        boni_deporte = 1 
+    elif solicitud.deporte == "2-3 veces a la semana":
+        boni_deporte = 0 
+    else: 
+        boni_deporte = -1 
+
+
+    calcular_riesgo_infarto = (boni_edad * boni_peso) + boni_deporte
 
     if calcular_riesgo_infarto <= 2:
-        probabilidad_infarto = "10%"
-        recomendacion = "Sigue así lo estas haciendo muy bien"
-    elif calcular_riesgo_infarto > 2 and calcular_riesgo_infarto <= 5:
-        probabilidad_infarto = "20-30%"
-        recomendacion = "Estas bien, mantente así"
-    elif calcular_riesgo_infarto == 6:
-        probabilidad_infarto = "40-50%"
-        recomendacion = "Deberias bajar tu peso"
-    elif calcular_riesgo_infarto > 6:
-        probabilidad_infarto = "60-70%"
+        probabilidad_infarto = "0-10%"
+        recomendacion = "Estas como un roble, sigue así lo estas haciendo muy bien"
+    elif calcular_riesgo_infarto > 2 and calcular_riesgo_infarto <= 4:
+        probabilidad_infarto = "15-25%"
+        recomendacion = "Estas bien, mantente activo y cuida tu alimentación"
+    elif calcular_riesgo_infarto > 4 and calcular_riesgo_infarto <= 6:
+        probabilidad_infarto = "30-40%"
+        recomendacion = "Riesgo moderado. Sería muy recomendable mejorar tu alimentación o hacer algo más de deporte."
+    elif calcular_riesgo_infarto > 6 and calcular_riesgo_infarto <= 8:
+        probabilidad_infarto = "50-60%"
         recomendacion = "Si no cambias tu estilo de vida, tu riesgo de infarto es alto, deberias bajar tu peso y hacer ejercicio"
+    elif calcular_riesgo_infarto > 8 and calcular_riesgo_infarto <= 10:
+        probabilidad_infarto = "70-80%"
+        recomendacion = "Tienes mucho riesgo, deberías bajar tu peso urgentemente y establecer una rutina de ejercicios."
+    else:
+        probabilidad_infarto = "90-100%"
+        recomendacion = "Tienes mucha suerte, si no cambias tu estilo de vida, tu riesgo de infarto es inminente, deberias bajar tu peso y hacer ejercicio"
+
 
     return {
         "solicitante": solicitud.nombre,
