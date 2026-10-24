@@ -44,7 +44,7 @@ def calcular_imc(solicitud: model.SolicitudCalculoIMC):
     elif resultado_imc >= 40:
         categoria_peso = "obesidad grado 3"
 
-    # Bonificaciones y penalizaciones segun la edad
+# Bonificaciones y penalizaciones segun la edad
     if solicitud.edad < 40:
         boni_edad = 1
     elif solicitud.edad >= 40 and solicitud.edad <= 60:
@@ -59,6 +59,7 @@ def calcular_imc(solicitud: model.SolicitudCalculoIMC):
     else:
         boni_peso = 3
 
+# Bonificaciones y penalizaciones segun la el deporte que se haga
     if solicitud.deporte == "No hago nada":
         boni_deporte = 2 
     elif solicitud.deporte == "1 vez a la semana":
@@ -70,7 +71,10 @@ def calcular_imc(solicitud: model.SolicitudCalculoIMC):
 
 
     calcular_riesgo_infarto = (boni_edad * boni_peso) + boni_deporte
+    if solicitud.fumador == True:
+        calcular_riesgo_infarto = calcular_riesgo_infarto + 1
 
+# Resultados finales
     if calcular_riesgo_infarto <= 2:
         probabilidad_infarto = "0-10%"
         recomendacion = "Estas como un roble, sigue así lo estas haciendo muy bien"

@@ -8,6 +8,7 @@ class SolicitudCalculoIMC(BaseModel):
     altura_persona: float = Field(gt=50, le=250, description="Altura del usuario en centimetros (100cm = 1m)")
     deporte: Literal["No hago nada", "1 vez a la semana", "2-3 veces a la semana", "Más de 4 días"] = Field(description="Frecuencia de actividad física")
     #se usa Literal cuando quieres limitar las opciones de un campo con x valores
+    fumador: bool = Field(default=False, description="Indica si el usuario fuma habitualmente, por defecto diremos que no fuma")
 
 class ResultadoCalculoIMC(BaseModel):
     solicitante: str = Field(description="Nombre del usuario que hace la consulta")

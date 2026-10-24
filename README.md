@@ -5,7 +5,7 @@
 
 ### Descripción del proyecto
 
-En este proyecto se implementa una API Rest desarrollada con FastAPI, que calcula el IMC del usuario y segun la edad del usuario devuelve una estimación del riesgo de infarto y un consejo de salud personalizado.
+En este proyecto se implementa una API Rest desarrollada con FastAPI, que calcula el IMC del usuario y segun la edad, y el deporte que suele realizar el usuario devuelve una estimación del riesgo de infarto y un consejo de salud personalizado.
 
 ### URL del proyecto desplegado
 Puedes probar la aplicación en la siguiente URL:
